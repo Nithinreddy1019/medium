@@ -1,12 +1,17 @@
 import { Hono } from 'hono'
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from '@prisma/extension-accelerate';
-import { sign } from 'hono/jwt';
+import { sign, verify } from 'hono/jwt';
+
+type Variables = {
+  userId: string
+}
 
 const app = new Hono<{
   Bindings: {
     DATABASE_URL: string,
-    JWT_SECRET: string
+    JWT_SECRET: string,
+    Variables: Variables
   }
 }>
 
@@ -14,6 +19,8 @@ app.get('/', async (c) => {
   return c.text('Hello Hono!')
 })
 
+
+//Signup route
 app.post("/api/v1/signup", async (c) => {
 
   const prisma = new PrismaClient({
@@ -39,11 +46,10 @@ app.post("/api/v1/signup", async (c) => {
     return c.status(403);
   }
 
-  return c.text("signup route");
-})
+});
 
 
-
+//Signin route
 app.post('/api/v1/signin', async (c) => {
 	const prisma = new PrismaClient({
 		datasourceUrl: c.env?.DATABASE_URL	,
@@ -65,11 +71,15 @@ app.post('/api/v1/signin', async (c) => {
 	return c.json({
     token: jwt
   });
-})
+});
+
+
 
 app.post("/api/v1/blog", (c) => {
+  
+
   return c.text("add a blog route")
-})
+});
 
 app.get("/api/v1/blog/:id", (c) => {
   const id = c.req.param('id');
