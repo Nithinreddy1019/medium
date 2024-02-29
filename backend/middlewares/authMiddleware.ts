@@ -19,7 +19,7 @@ const authMiddleware = async (c: any, next: any) => {
     const user_id = decoded.id;
     c.set("userId",user_id)
 
-    next()
+    await next()
 }
 
 

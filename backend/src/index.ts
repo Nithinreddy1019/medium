@@ -79,8 +79,48 @@ app.post('/api/v1/signin', async (c) => {
 
 
 
-app.post("/api/v1/blog", (c) => {
-  
+app.post("/api/v1/blog", async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+
+  const {title, content} = await c.req.json();
+  if(!title || !content){
+    c.status(411);
+    return c.json({msg:"Invalid inputs"})
+  }
+
+  const userId = c.get('userId');
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId
+    }
+  });
+
+  try {
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        posts: {
+          create: {
+            title: title,
+            content: content
+          }
+        }
+      }
+    });
+
+    c.status(200);
+    return c.json({msg: "Successfully created a post"})
+  } catch (error) {
+    c.status(411);
+    return c.json({msg: "An error occured"})
+  }
+
+
   return c.text("add a blog route")
 });
 
