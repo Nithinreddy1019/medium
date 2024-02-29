@@ -91,6 +91,7 @@ app.post("/api/v1/blog", async (c) => {
     return c.json({msg:"Invalid inputs"})
   }
 
+  //@ts-ignore
   const userId = c.get('userId');
   const user = await prisma.user.findUnique({
     where: {
@@ -120,18 +121,85 @@ app.post("/api/v1/blog", async (c) => {
     return c.json({msg: "An error occured"})
   }
 
-
-  return c.text("add a blog route")
 });
 
-app.get("/api/v1/blog/:id", (c) => {
+app.get("/api/v1/blog/:id", async (c) => {
+
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
   const id = c.req.param('id');
-  console.log(id);
-  return c.text("get blogs route")
+
+  try {
+    const blog = await prisma.post.findUnique({
+      where: {
+        id: id
+      }
+    });
+
+    if(!blog){
+      c.status(411);
+      return c.json({msg: "No blog found"})
+    }
+
+    c.status(200)
+    return c.json({
+      title: blog?.title,
+      content: blog?.content
+    })
+  } catch (error) {
+    c.status(411)
+    return c.json({msg: "An error occured"})
+  }
 })
 
-app.put("/api/v1/blog", (c) => {
-  return c.text("Update blog route")
+interface reqBody {
+  title? :string,
+  content? :string,
+  published? :boolean
+}
+function filterNullValues(body: Partial<reqBody>): Partial<reqBody>{
+  const result: Partial<reqBody> = {}
+
+  for (let key in body){
+    if(body[key as keyof reqBody] !== null && body[key as keyof reqBody] !== undefined){
+      //@ts-ignore
+      result[key as keyof reqBody] = body[key as keyof reqBody]
+    }
+  }
+  return result;
+}
+app.put("/api/v1/blog", async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate())
+
+  const body = await c.req.json();
+  const passedValues = filterNullValues(body);
+
+  //@ts-ignore
+  const userId = c.get("userId");
+  const postId = c.req.query('id');
+
+  try {
+    const updatedPost = await prisma.post.update({
+      where: {
+        id: postId,
+        authorId: userId
+      },
+      data: {...passedValues}
+    })
+
+    c.status(200);
+    return c.json({
+      msg: "successfully updated the blog"
+    })
+  } catch (error) {
+    c.status(411);
+    return c.json({msg: "An error occured"})
+  }
+
 })
 
 
