@@ -1,7 +1,7 @@
 import { verify } from "hono/jwt";
 import app from "../src";
 
-app.use("/api/v1/blog/*", async (c, next) => {
+const authMiddleware = async (c: any, next: any) => {
     const token = c.req.header("authorization");
     if(!token || !token.startsWith("Bearer")){
         c.status(403)
@@ -16,7 +16,11 @@ app.use("/api/v1/blog/*", async (c, next) => {
         return c.json({message: "Unauthorized"})
     };
 
-    
-    
-})
+    const user_id = decoded.id;
+    c.set("userId",user_id)
 
+    next()
+}
+
+
+export default authMiddleware;

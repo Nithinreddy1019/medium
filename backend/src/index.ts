@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from '@prisma/extension-accelerate';
 import { sign, verify } from 'hono/jwt';
+import authMiddleware from '../middlewares/authMiddleware';
 
 type Variables = {
   userId: string
@@ -14,6 +15,9 @@ const app = new Hono<{
     Variables: Variables
   }
 }>
+
+//authorization middleware
+app.use("/api/v1/blog/*", authMiddleware)
 
 app.get('/', async (c) => {
   return c.text('Hello Hono!')
@@ -77,7 +81,6 @@ app.post('/api/v1/signin', async (c) => {
 
 app.post("/api/v1/blog", (c) => {
   
-
   return c.text("add a blog route")
 });
 
