@@ -22,7 +22,6 @@ userRouter.post("/sign", async (c) => {
     }).$extends(withAccelerate());
     
     const body = await c.req.json();
-    console.log(body);
   
     try {
       const user = await prisma.user.create({
@@ -32,7 +31,6 @@ userRouter.post("/sign", async (c) => {
           name: body.name
         }
       });
-      console.log(user);
   
       const token = await sign({id: user.id}, c.env.JWT_SECRET)
       return c.json({

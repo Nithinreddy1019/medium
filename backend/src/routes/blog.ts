@@ -145,6 +145,23 @@ blogRouter.put("/blog", async (c) => {
       return c.json({msg: "An error occured"})
     }
   
+});
+
+
+//get all blogs
+blogRouter.get("/blog/all/bulk", async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+      }).$extends(withAccelerate())
+
+    try {
+        const blogs = await prisma.post.findMany({})
+        c.status(200);
+        return c.json(blogs)
+    } catch (error) {
+        c.status(411);
+        return c.json({msg: "An error occured"})
+    }
 })
 
 
