@@ -1,5 +1,5 @@
 import { verify } from "hono/jwt";
-import app from "../src";
+import app from "..";
 
 const authMiddleware = async (c: any, next: any) => {
     const token = c.req.header("authorization");
