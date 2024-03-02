@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from '@prisma/extension-accelerate';
 import authMiddleware from '../middlewares/authMiddleware';
+import { BlogPostSchema, BlogUpdateSchema } from '@kethireddynithinreddy/medium-common';
 
 const blogRouter = new Hono<{
     Bindings: {
@@ -25,8 +26,15 @@ blogRouter.post("/blog", async (c) => {
     }).$extends(withAccelerate());
   
   
-    const {title, content} = await c.req.json();
-    if(!title || !content){
+    const body = await c.req.json();
+    const parsedBody = await BlogPostSchema.safeParse(body);
+
+    if(!parsedBody.success){
+      c.status(411);
+      c.json({msg:"Invalid inputs"})
+    }
+    
+    if(!body.title || !body.content){
       c.status(411);
       return c.json({msg:"Invalid inputs"})
     }
@@ -47,8 +55,8 @@ blogRouter.post("/blog", async (c) => {
         data: {
           posts: {
             create: {
-              title: title,
-              content: content
+              title: body.title,
+              content: body.content
             }
           }
         }
@@ -121,9 +129,16 @@ blogRouter.put("/blog", async (c) => {
     }).$extends(withAccelerate())
   
     const body = await c.req.json();
+
+    const parsedBody = await BlogUpdateSchema.safeParse(body);
+    if(!parsedBody.success){
+      c.status(411);
+      c.json({msg:"Invalid inputs"})
+    }
+
     const passedValues = filterNullValues(body);
-  
-    //@ts-ignore
+
+    
     const userId = c.get("userId");
     const postId = c.req.query('id');
   

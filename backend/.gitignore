@@ -4,7 +4,7 @@ dist
 .dev.vars
 
 .env
-wrangler.toml
+
 
 # Change them to your taste:
 package-lock.json
