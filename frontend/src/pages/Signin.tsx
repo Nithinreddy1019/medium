@@ -1,8 +1,15 @@
+import Quote from "../components/Quote"
+import SigninAuth from "../components/SigninAuth"
 
 const Signin = () => {
   return (
-    <div className="font-bold text-red-900">
-      Signin Route
+    <div className="grid lg:grid-cols-2">
+        <div>
+            <SigninAuth />
+        </div>
+        <div>
+            <Quote />
+        </div>
     </div>
   )
 }
