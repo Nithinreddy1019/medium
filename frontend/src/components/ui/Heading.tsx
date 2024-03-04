@@ -14,7 +14,7 @@ const Heading = ({heading, subHeading, toLink, toLinkValue}: headingProps) => {
       <div className="text-3xl font-bold text-[#495464]">
         {heading}
       </div>
-      <div className="text-[#BBBFCA] text-sm">
+      <div className="text-[#BBBFCA] text-sm pt-2">
         {subHeading}
         <Link className="pl-2 underline" to={toLink}>{toLinkValue}</Link>
       </div>
