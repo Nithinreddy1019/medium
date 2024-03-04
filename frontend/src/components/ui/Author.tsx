@@ -5,12 +5,17 @@ interface AuthorProps {
 }
 const Author = ({name}: AuthorProps) => {
   return (
-    <div className="flex pt-8 items-center gap-4 text-[#495464]">
-        <div className="">
-            <AvatarGen name={name}/>
+    <div className="pt-8 text-[#495464]">
+        <div className=" ">
+            Author
         </div>
-        <div className="italic font-medium text-lg">
-            {name}
+        <div className="flex items-center gap-4 pt-2">
+            <div className="">
+                <AvatarGen name={name}/>
+            </div>
+            <div className="italic font-medium text-lg">
+                {name}
+            </div>
         </div>
     </div>
   )
