@@ -1,5 +1,6 @@
 import AppBar from "../components/AppBar"
 import BlogCard from "../components/BlogCard"
+import BlogspageSkeleton from "../components/ui/BlogspageSkeleton";
 import { useBlogs } from "../hooks"
 
 const Blogs = () => {
@@ -11,8 +12,17 @@ const Blogs = () => {
                 <div>
                     <AppBar name={"Maajin"}/>
                 </div>
-                <div className="mt-16">
-                    Loading...
+                <div className="mt-16 grid lg:grid-cols-3">
+                    <div className="col-span-2">
+                        <BlogspageSkeleton />
+                        <BlogspageSkeleton />
+                        <BlogspageSkeleton />
+                        <BlogspageSkeleton />
+                        <BlogspageSkeleton />
+                    </div>
+                    <div className="hidden lg:block pt-4">
+                        Tags
+                    </div>
                 </div>
             </div>
         )
