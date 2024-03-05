@@ -48,22 +48,21 @@ blogRouter.post("/blog", async (c) => {
     });
   
     try {
-      const updatedUser = await prisma.user.update({
-        where: {
-          id: userId
-        },
+      
+
+      const blogAdded = await prisma.post.create({
         data: {
-          posts: {
-            create: {
-              title: body.title,
-              content: body.content
-            }
-          }
+          title: body.title,
+          content: body.content,
+          authorId: userId
+        },
+        select: {
+          id: true
         }
-      });
+      })
   
       c.status(200);
-      return c.json({msg: "Successfully created a post"})
+      return c.json({msg: "Successfully created a post", res: blogAdded})
     } catch (error) {
       c.status(411);
       return c.json({msg: "An error occured"})
