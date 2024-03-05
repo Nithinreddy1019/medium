@@ -12,8 +12,8 @@ const Home = () => {
                 "Authorization": "Bearer "+ localStorage.getItem("token")
             }
         }).then((res) => {
-            if(res.data.message === "Unauthorized"){
-                navigate("/singup")
+            if(res.data.message !== "Unauthorized"){
+                navigate("/signup")
             } else {
                 navigate("/blogs")    
             }
